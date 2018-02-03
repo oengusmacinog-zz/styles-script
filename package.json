@@ -1,0 +1,20 @@
+{
+  "name": "scss-to-ts",
+  "version": "1.0.0",
+  "description": "Convert SCSS to mergestyles format",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "scss",
+    "typescript"
+  ],
+  "author": "Brian Garland",
+  "license": "ISC",
+  "dependencies": {
+    "prettier": "^1.10.2",
+    "query-ast": "^1.0.1",
+    "scss-parser": "^1.0.0"
+  }
+}
