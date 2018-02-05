@@ -5,15 +5,28 @@ let prettier = require('prettier');
 let utils = require('./utils');
 
 function getSelectors(rules) {
+    let prevCode = '';
 
     rules.forEach(function(rule, i){
         let matchIndex = i-1;
+        let selArray = [];
+
+        // console.log(rule.code);
+
         if( i == 0) {
-            // I will need this later
+            prevCode = rule.code;
+        // } else if (rule.code.includes(prevCode)) {
+            // console.log(`hello ${i}`);
+
         } else {
-            let selArray = [];
+
+            prevCode = rule.code;
 
             while(rule.code.includes(rules[matchIndex].code)) {
+                // console.log(matchIndex);
+                // console.log(`rules[matchIndex].code => ${rules[matchIndex].code}`);
+
+                // console.log(`prevCode => ${prevCode}`);
                 let sel = {
                     code: rules[matchIndex].code,
                     selectors: []
@@ -32,17 +45,29 @@ function getSelectors(rules) {
                 // Remove selector as a parent rule
                 rules.splice(matchIndex, 1);
 
-                matchIndex--;
+
+                if (matchIndex > 1) {
+                    matchIndex--;
+                } else {
+                    break;
+                }
+
             }
 
-            // If selectors exist check if they have selecters
-            if ( selArray.length > 0 ){
-                getSelectors(selArray);
-            }
+            // // If selectors exist check if they have selecters
+            // if ( selArray.length > 0 ){
+            //     getSelectors(selArray);
+            // }
+
+            // prevCode = rule.code;
+            // console.log(`rules[matchIndex].code => ${rules[matchIndex].code}`);
+
+            // console.log(`prevCode => ${prevCode}`);
 
             rule.selectors = selArray;
             // rule.code = utils.cleanUpNewlines(rule.code);
             // not working...
+
         }
     });
 
@@ -89,8 +114,9 @@ function convert(filename) {
 
     }
 
-    rules = getSelectors(rules);
+    // console.log(rules);
 
+    rules = getSelectors(rules);
 
     // console.log(rules);
     utils.writeToFile('./out.json', prettier.format(JSON.stringify(rules)));

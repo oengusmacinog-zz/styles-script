@@ -114,3 +114,8 @@ gulp-cache
 npm-debug.log.*
 
 package-lock.json
+
+# Test scss, json, and ts
+*.json
+*.scss
+*.ts
