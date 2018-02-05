@@ -5,47 +5,29 @@ let prettier = require('prettier');
 let utils = require('./utils');
 
 function getSelectors(rules) {
-    let prevCode = '';
 
-    rules.forEach(function(rule, i){
+    let i = 0;
+
+    for(let rule of rules) {
         let matchIndex = i-1;
         let selArray = [];
 
-        // console.log(rule.code);
-
         if( i == 0) {
-            prevCode = rule.code;
-        // } else if (rule.code.includes(prevCode)) {
-            // console.log(`hello ${i}`);
+
+            // Can't look back from first element
+            i++;
+            continue;
 
         } else {
 
-            prevCode = rule.code;
-
+            // Look backward till no match is found
             while(rule.code.includes(rules[matchIndex].code)) {
-                // console.log(matchIndex);
-                // console.log(`rules[matchIndex].code => ${rules[matchIndex].code}`);
 
-                // console.log(`prevCode => ${prevCode}`);
-                let sel = {
-                    code: rules[matchIndex].code,
-                    selectors: []
-                };
+                // Add Selector id to array
+                selArray.push(rules[matchIndex].id);
 
-                // Remove selector rule from parent code element
-                // let re = new RegExp(`${rules[matchIndex].code}`,"g");
-
-                preRe = utils.cleanForRegex(rules[matchIndex].code);
-                let re = new RegExp(preRe,"g");
-                rule.code = rule.code.replace(re, '');
-
-                //Add Selector to array
-                selArray.push(sel);
-
-                // Remove selector as a parent rule
-                rules.splice(matchIndex, 1);
-
-
+                // Iterate backwards till beginning
+                // of array
                 if (matchIndex > 1) {
                     matchIndex--;
                 } else {
@@ -54,22 +36,11 @@ function getSelectors(rules) {
 
             }
 
-            // // If selectors exist check if they have selecters
-            // if ( selArray.length > 0 ){
-            //     getSelectors(selArray);
-            // }
-
-            // prevCode = rule.code;
-            // console.log(`rules[matchIndex].code => ${rules[matchIndex].code}`);
-
-            // console.log(`prevCode => ${prevCode}`);
-
             rule.selectors = selArray;
-            // rule.code = utils.cleanUpNewlines(rule.code);
-            // not working...
 
         }
-    });
+        i++;
+    }
 
     return rules;
 }
@@ -107,14 +78,16 @@ function convert(filename) {
     for (i = 0; i < ruleCount; i++) {
         // turn rule into string
         let s = {
-            code: stringify($('rule').get(i)),
-            selectors: []
+            "id": i,
+            "code": stringify($('rule').get(i)),
+            "selectors": []
         };
         rules.push(s);
 
     }
 
     // console.log(rules);
+    // return;
 
     rules = getSelectors(rules);
 
@@ -137,8 +110,6 @@ function main() {
     } else {
         console.log(`\nPlease Enter a Valid Command:\n\tconvert - convert a scss file to mergestyls\n\twrite-props - write props list\n`)
     }
-
-
 
 }
 
